@@ -47,4 +47,3 @@ buildNumber.properties
 
 # Log file
 *.log
-*Dockerfile
