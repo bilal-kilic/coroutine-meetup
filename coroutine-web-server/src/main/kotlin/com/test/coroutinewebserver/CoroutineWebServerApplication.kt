@@ -2,6 +2,7 @@ package com.test.coroutinewebserver
 
 import com.couchbase.client.java.ReactiveCollection
 import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.stereotype.Component
@@ -47,14 +48,14 @@ class UserService(private val userRepository: UserRepository, private val addres
 @Component
 class UserRepository(private val reactiveCollection: ReactiveCollection) {
     suspend fun getUser(id: String): User {
-        return reactiveCollection.get(id).map { it.contentAs(User::class.java) }.awaitFirst() ?: throw Exception("user.not.found")
+        return reactiveCollection.get(id).map { it.contentAs(User::class.java) }.awaitFirstOrNull() ?: throw Exception("user.not.found")
     }
 }
 
 @Component
-class AddressRepository {
+class AddressRepository(private val reactiveCollection: ReactiveCollection) {
     suspend fun getAddressOfUser(userId: String): Address {
-        return Mono.justOrEmpty(Address(userId, "Istanbul/Turkey")).awaitFirst()
+        return reactiveCollection.get(userId).awaitFirst().contentAs(Address::class.java)
     }
 }
 

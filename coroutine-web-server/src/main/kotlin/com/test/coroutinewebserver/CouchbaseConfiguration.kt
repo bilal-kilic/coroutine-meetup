@@ -23,6 +23,7 @@ class CouchbaseConfiguration(private val objectMapper: ObjectMapper) {
             .builder()
             .compressionConfig(CompressionConfig.builder().enable(true))
             .timeoutConfig(TimeoutConfig.builder().kvTimeout(Duration.ofMillis(500)))
+            .timeoutConfig(TimeoutConfig.builder().queryTimeout(Duration.ofMillis(500)))
             .requestTracer(NoopRequestTracer())
             .jsonSerializer(JacksonJsonSerializer.create(objectMapper))
             .scheduler(Schedulers.elastic())
