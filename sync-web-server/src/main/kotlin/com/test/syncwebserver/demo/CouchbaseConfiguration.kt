@@ -11,6 +11,7 @@ import com.couchbase.client.java.env.ClusterEnvironment
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import reactor.core.scheduler.Schedulers
 import java.time.Duration
 
 @Configuration
@@ -21,6 +22,7 @@ class CouchbaseConfiguration(private val objectMapper: ObjectMapper) {
             .builder()
             .compressionConfig(CompressionConfig.builder().enable(true))
             .timeoutConfig(TimeoutConfig.builder().kvTimeout(Duration.ofMillis(500)))
+            .timeoutConfig(TimeoutConfig.builder().queryTimeout(Duration.ofMillis(500)))
             .requestTracer(NoopRequestTracer())
             .jsonSerializer(JacksonJsonSerializer.create(objectMapper))
             .build()

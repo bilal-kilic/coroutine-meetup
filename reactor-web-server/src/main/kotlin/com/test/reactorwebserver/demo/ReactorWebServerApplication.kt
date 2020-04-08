@@ -58,9 +58,9 @@ class UserRepository(private val reactiveCollection: ReactiveCollection) {
 }
 
 @Component
-class AddressRepository {
+class AddressRepository(private val reactiveCollection: ReactiveCollection) {
     fun getAddressOfUser(userId: String): Mono<Address> {
-        return Mono.justOrEmpty(Address(userId, "Istanbul/Turkey"))
+        return reactiveCollection.get(userId).map { it.contentAs(Address::class.java) }
     }
 }
 

@@ -23,10 +23,24 @@ class UserController(private val userService: UserService) {
     }
 }
 
-@Service 
-class UserService(private val userRepository: UserRepository) {
+@Service
+class UserService(
+    private val userRepository: UserRepository,
+    private val addressRepository: AddressRepository
+) {
     fun getUser(id: String): User {
         return userRepository.getUser(id)
+    }
+
+    fun getUserWithAddress(id: String): UserWithAddressDto {
+        val user = userRepository.getUser(id)
+
+        if (user.hasAddress) {
+            val address = addressRepository.getAddressOfUser(id)
+            return UserWithAddressDto(user.firstName, address.address)
+        }
+
+        return UserWithAddressDto(user.firstName, "No Address")
     }
 }
 
@@ -37,9 +51,29 @@ class UserRepository(private val collection: Collection) {
     }
 }
 
+@Service
+class AddressRepository(private val collection: Collection) {
+    fun getAddressOfUser(userId: String): Address {
+        return collection.get(userId).contentAs(Address::class.java)
+    }
+}
+
+//region Models
 data class User(
     val id: String,
     val firstName: String,
     val lastName: String,
-    val email: String
+    val email: String,
+    val hasAddress: Boolean
 )
+
+data class UserWithAddressDto(
+    val userName: String,
+    val address: String
+)
+
+data class Address(
+    val userId: String,
+    val address: String
+)
+//endregion
